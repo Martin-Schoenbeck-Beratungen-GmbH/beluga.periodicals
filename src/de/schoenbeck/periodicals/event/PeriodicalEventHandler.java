@@ -1,0 +1,196 @@
+package de.schoenbeck.periodicals.event;
+
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+
+import org.adempiere.base.event.AbstractEventHandler;
+import org.adempiere.base.event.IEventTopics;
+import org.adempiere.exceptions.AdempiereException;
+import org.compiere.model.I_C_Order;
+import org.compiere.model.MOrder;
+import org.compiere.model.MOrderLine;
+import org.compiere.model.Query;
+import org.compiere.util.CLogger;
+import org.compiere.util.DB;
+import org.compiere.util.Env;
+import org.compiere.util.Msg;
+import org.osgi.service.event.Event;
+
+import de.schoenbeck.periodicals.model.MPeriodical;
+import de.schoenbeck.periodicals.model.MPeriodicalSubscriber;
+import de.schoenbeck.periodicals.process.Util;
+
+public class PeriodicalEventHandler extends AbstractEventHandler {
+
+	private static CLogger log = CLogger.get();
+	
+	@Override
+	protected void initialize() {
+		registerEvent(IEventTopics.DOC_AFTER_COMPLETE);
+	}
+
+	@Override
+	protected void doHandleEvent(Event event) {
+		
+		if (event.getProperty("tableName").equals(MOrder.Table_Name)) {
+			Properties ctx = Env.getCtx();
+			MOrder order = (MOrder) getPO(event);
+			
+			StringBuilder errs = new StringBuilder();
+			
+			for (SubInfo info : getSubscriptionInfo(ctx, order.get_ID())) {
+				try {
+					createSubscriberFromSubInfo(ctx, info.line, info.periodical_id, info.frequency, info.frequencyType, info.editionspaid, info.qtyplan, info.isRenew);
+				} catch (RuntimeException e) {
+					String msg = Msg.getMsg(Env.getCtx(), "AddingSubscriberFailed", new Object[] {info.line.getProduct().getName()});
+					errs.append(msg).append("\n")
+						.append(e).append(";\n");
+					CLogger.get().log(Level.SEVERE, "", e);
+				}
+			}
+
+			if (errs.length() > 0)
+				addErrorMessage(event, errs.toString());
+		}
+	}
+
+	/**
+	 * Collect a {@link LinkedList} of SubInfo objects.<br>
+	 * The objects contain all info for order lines that contain a product representing a periodical subscription,
+	 * as per configuration in the Periodical Subscription tab.
+	 * @param ctx - execution context
+	 * @param order_id - The given order
+	 * @return the list as explained above
+	 */
+	private List<SubInfo> getSubscriptionInfo(Properties ctx, int order_id) {
+		
+		LinkedList<SubInfo> rtn = new LinkedList<>();
+		
+		String sql = "SELECT co.c_orderline_id, cp.c_periodical_id, cps.frequency, cps.frequencytype, cps.editionspaid, cps.qtyplan, cps.isrenewal "
+				+ "FROM c_orderline co "
+				+ "JOIN c_periodicalsubscription cps "
+				+ "	ON cps.m_product_id = co.m_product_id "
+				+ "	AND cps.ad_client_id = co.ad_client_id "
+				+ "JOIN c_periodical cp "
+				+ "	ON cp.c_periodical_id = cps.c_periodical_id "
+				+ "	AND cp.ad_client_id = co.ad_client_id "
+				+ "WHERE cps.isactive = 'Y' "
+				+ "AND cp.isactive = 'Y' "
+				+ "AND co.isactive = 'Y' "
+				+ "AND co.ad_client_id = ? "
+				+ "AND co.c_order_id = ?";
+		PreparedStatement ps = DB.prepareStatement(sql, null);
+		ResultSet rs = null;
+		try {
+			ps.setInt(1, Env.getAD_Client_ID(ctx));
+			ps.setInt(2, order_id);
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				rtn.add(new SubInfo(
+						new MOrderLine(ctx, rs.getInt("c_orderline_id"), null),
+						rs.getInt("c_periodical_id"),
+						rs.getInt("frequency"),
+						rs.getString("frequencytype").charAt(0),
+						rs.getInt("editionspaid"),
+						rs.getBigDecimal("qtyplan"),
+						rs.getBoolean("isrenewal")
+						));
+			}
+		} catch (SQLException e) {
+			CLogger.get().log(Level.SEVERE, "", e);
+		} finally {
+			DB.close(rs, ps);
+			rs = null;
+			ps = null;
+		}
+		
+		return rtn;
+	}
+	
+	/**
+	 * Create an entry for {@link MPeriodicalSubscriber} with data taken from this order and configuration in the Periodical Subscription tab.
+	 * @param ctx - execution context
+	 * @param line - the order line containing a product representing a periodical subscription
+	 * @param periodical_id - the periodical represented by the former order line
+	 * @param frequency - the frequency in which the subscription needs to be renewed
+	 * @param frequencyType - the unit the {@code frequency} is given in
+	 * @param editionspaid - the amount of editions the subscriber will receive
+	 * @param isRenew - whether the subscription bought is a renewal of an existing subscription
+	 */
+	private void createSubscriberFromSubInfo (
+			Properties ctx, MOrderLine line, int periodical_id, int frequency, char frequencyType, int editionspaid, 
+			BigDecimal qtyPlan, boolean isRenew) {
+		
+		String where = MPeriodical.COLUMNNAME_C_Periodical_ID + " = " + periodical_id +
+				" AND " + MPeriodicalSubscriber.COLUMNNAME_C_BPartner_ID + " = " + line.getC_BPartner_ID() +
+				" AND " + MPeriodicalSubscriber.COLUMNNAME_Bill_BPartner_ID + " = " + line.getC_Order().getBill_BPartner_ID() +
+				" AND " + MPeriodicalSubscriber.COLUMNNAME_SubscribeDate + " < '" + Env.getCtx().get(Env.DATE) + "'" +
+				" AND " + MPeriodicalSubscriber.COLUMNNAME_SubscribedUntil + " >= '" + Env.getCtx().get(Env.DATE) + "'" +
+				" AND " + MPeriodicalSubscriber.COLUMNNAME_IsActive + " = 'Y'";
+		int subscriber_id = Math.max(new Query(ctx, MPeriodicalSubscriber.Table_Name, where, null).firstIdOnly(), 0);
+		
+		if (!isRenew && subscriber_id > 0) {
+			throw new AdempiereException("Periodical does not allow renewal");
+		}
+		
+		MPeriodicalSubscriber subscriber = new MPeriodicalSubscriber(ctx, subscriber_id, null);
+		if (!subscriber.isrenewAutomatically() && subscriber_id > 0)
+			throw new AdempiereException();
+		
+		I_C_Order currentOrder = line.getC_Order();
+		
+		subscriber.setAD_Org_ID(line.getAD_Org_ID());
+		subscriber.setC_Periodical_ID(periodical_id);
+		subscriber.setrenewAutomatically(isRenew);
+		
+		subscriber.setC_BPartner_ID(line.getC_BPartner_ID());
+		subscriber.setC_BPartner_Location_ID(line.getC_BPartner_Location_ID());
+		subscriber.setBill_BPartner_ID(currentOrder.getBill_BPartner_ID());
+		subscriber.setBill_Location_ID(currentOrder.getBill_Location_ID());
+		subscriber.setPOReference(currentOrder.getPOReference());
+		subscriber.setC_Order_ID(currentOrder.getC_Order_ID());
+		
+		Timestamp date = line.getDatePromised();
+		Timestamp endTime = Util.addTimeToTimestamp(ctx, date, frequency, frequencyType);
+		
+		if (!isRenew || subscriber_id == 0) // Only update the "subscribed since" date when it is no renewal nor new
+			subscriber.setSubscribeDate(date);
+		subscriber.setSubscribedUntil(endTime);
+		
+		subscriber.setEditionsPaid(editionspaid
+				+ subscriber.getEditionsPaid());
+		subscriber.setQtyPlan(line.getQtyEntered().multiply(qtyPlan));
+		
+		subscriber.saveEx();
+	}
+	
+	
+	private class SubInfo {
+		public final MOrderLine line;
+		public final int periodical_id;
+		public final int frequency;
+		public final char frequencyType;
+		public final int editionspaid;
+		public final BigDecimal qtyplan;
+		public final boolean isRenew;
+		
+		SubInfo (MOrderLine line, int periodical_id, int frequency, char frequencyType, int editionspaid, BigDecimal qtyplan, boolean isRenew) {
+			this.line = line;
+			this.periodical_id = periodical_id;
+			this.frequency = frequency;
+			this.frequencyType = frequencyType;
+			this.editionspaid = editionspaid;
+			this.qtyplan = qtyplan;
+			this.isRenew = isRenew;
+		}
+	}
+
+}
