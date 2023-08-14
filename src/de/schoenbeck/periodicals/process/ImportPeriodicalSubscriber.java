@@ -204,6 +204,10 @@ public class ImportPeriodicalSubscriber extends SvrProcess implements ImportProc
 			while (rs.next()) {
 				MLocation loc = new MLocation(getCtx(), 0, get_TrxName());
 				loc.setAddress1(rs.getString("address1"));
+				loc.setAddress2(rs.getString("address2"));
+				loc.setAddress3(rs.getString("address3"));
+				loc.setAddress4(rs.getString("address4"));
+				loc.setAddress5(rs.getString("address5"));
 				loc.setPostal(rs.getString("postal"));
 				loc.setCity(rs.getString("city"));
 				loc.setC_Country_ID(findCountryID(rs.getString("country")));
