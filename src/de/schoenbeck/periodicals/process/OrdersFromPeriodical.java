@@ -95,7 +95,7 @@ public class OrdersFromPeriodical extends SvrProcess {
 			Date today = new SimpleDateFormat("yyyy-MM-dd", Env.getLocale(getCtx()))
 					.parse( ((String) Env.getCtx().get(Env.DATE)).split(" ")[0] );
 
-			if (subscriber.getSubscribeDate().before(today)) continue;
+			if (subscriber.getSubscribeDate().after(today)) continue;
 			
 			if (subscriber.isrenewAutomatically() &&
 					(subscriber.getEditionsPaid() <= 0 

@@ -21,6 +21,7 @@ import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
+import org.compiere.util.Trx;
 import org.osgi.service.event.Event;
 
 import de.schoenbeck.periodicals.model.MPeriodical;
@@ -29,36 +30,51 @@ import de.schoenbeck.periodicals.process.Util;
 
 public class PeriodicalEventHandler extends AbstractEventHandler {
 
-	private static CLogger log = CLogger.get();
-	
 	@Override
 	protected void initialize() {
 		registerEvent(IEventTopics.DOC_AFTER_COMPLETE);
+		CLogger.get().log(Level.SEVERE, "registered event handler: " + this.getClass().getCanonicalName());
 	}
 
 	@Override
 	protected void doHandleEvent(Event event) {
 		
-		if (event.getProperty("tableName").equals(MOrder.Table_Name)) {
-			Properties ctx = Env.getCtx();
-			MOrder order = (MOrder) getPO(event);
-			
-			StringBuilder errs = new StringBuilder();
-			
-			for (SubInfo info : getSubscriptionInfo(ctx, order.get_ID())) {
-				try {
-					createSubscriberFromSubInfo(ctx, info.line, info.periodical_id, info.frequency, info.frequencyType, info.editionspaid, info.qtyplan, info.isRenew);
-				} catch (RuntimeException e) {
-					String msg = Msg.getMsg(Env.getCtx(), "AddingSubscriberFailed", new Object[] {info.line.getProduct().getName()});
-					errs.append(msg).append("\n")
-						.append(e).append(";\n");
-					CLogger.get().log(Level.SEVERE, "", e);
-				}
+		Trx trx = Trx.get(Trx.createTrxName("PeriodicalEvent"), true);
+		
+		if (!event.getProperty("tableName").equals(MOrder.Table_Name)) return;
+		
+		Properties ctx = Env.getCtx();
+		MOrder order = (MOrder) getPO(event);
+		
+		// skip orders that have been used to create a subscriber before
+		if (isOrderUsedAlready(ctx, order.get_ID(), trx.getTrxName())) return;
+		
+		StringBuilder errs = new StringBuilder();
+		
+		for (SubInfo info : getSubscriptionInfo(ctx, order.get_ID(), trx.getTrxName())) {
+			try {
+				createSubscriberFromSubInfo(ctx, info.line, info.periodical_id, info.frequency, info.frequencyType, info.editionspaid, info.qtyplan, info.isRenew, trx.getTrxName());
+			} catch (RuntimeException e) {
+				String msg = Msg.getMsg(Env.getCtx(), "AddingSubscriberFailed", new Object[] {info.line.getProduct().getName()});
+				errs.append(msg).append("\n")
+					.append(e).append(";\n");
+				CLogger.get().log(Level.SEVERE, "", e);
 			}
-
-			if (errs.length() > 0)
-				addErrorMessage(event, errs.toString());
 		}
+
+		trx.commit();
+		trx.close();
+		
+		if (errs.length() > 0)
+			addErrorMessage(event, errs.toString());
+	}
+	
+	private boolean isOrderUsedAlready (Properties ctx, int order_id, String trxname) {
+		return new Query(
+				ctx,
+				MPeriodicalSubscriber.Table_Name,
+				MPeriodicalSubscriber.COLUMNNAME_C_Order_ID + " = " + order_id,
+				trxname).match();
 	}
 
 	/**
@@ -69,7 +85,7 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 	 * @param order_id - The given order
 	 * @return the list as explained above
 	 */
-	private List<SubInfo> getSubscriptionInfo(Properties ctx, int order_id) {
+	private List<SubInfo> getSubscriptionInfo(Properties ctx, int order_id, String trxname) {
 		
 		LinkedList<SubInfo> rtn = new LinkedList<>();
 		
@@ -86,7 +102,7 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 				+ "AND co.isactive = 'Y' "
 				+ "AND co.ad_client_id = ? "
 				+ "AND co.c_order_id = ?";
-		PreparedStatement ps = DB.prepareStatement(sql, null);
+		PreparedStatement ps = DB.prepareStatement(sql, trxname);
 		ResultSet rs = null;
 		try {
 			ps.setInt(1, Env.getAD_Client_ID(ctx));
@@ -95,7 +111,7 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 			
 			while (rs.next()) {
 				rtn.add(new SubInfo(
-						new MOrderLine(ctx, rs.getInt("c_orderline_id"), null),
+						new MOrderLine(ctx, rs.getInt("c_orderline_id"), trxname),
 						rs.getInt("c_periodical_id"),
 						rs.getInt("frequency"),
 						rs.getString("frequencytype").charAt(0),
@@ -127,7 +143,7 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 	 */
 	private void createSubscriberFromSubInfo (
 			Properties ctx, MOrderLine line, int periodical_id, int frequency, char frequencyType, int editionspaid, 
-			BigDecimal qtyPlan, boolean isRenew) {
+			BigDecimal qtyPlan, boolean isRenew, String trxname) {
 		
 		String where = MPeriodical.COLUMNNAME_C_Periodical_ID + " = " + periodical_id +
 				" AND " + MPeriodicalSubscriber.COLUMNNAME_C_BPartner_ID + " = " + line.getC_BPartner_ID() +
@@ -135,13 +151,13 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 				" AND " + MPeriodicalSubscriber.COLUMNNAME_SubscribeDate + " < '" + Env.getCtx().get(Env.DATE) + "'" +
 				" AND " + MPeriodicalSubscriber.COLUMNNAME_SubscribedUntil + " >= '" + Env.getCtx().get(Env.DATE) + "'" +
 				" AND " + MPeriodicalSubscriber.COLUMNNAME_IsActive + " = 'Y'";
-		int subscriber_id = Math.max(new Query(ctx, MPeriodicalSubscriber.Table_Name, where, null).firstIdOnly(), 0);
+		int subscriber_id = Math.max(new Query(ctx, MPeriodicalSubscriber.Table_Name, where, trxname).firstIdOnly(), 0);
 		
 		if (!isRenew && subscriber_id > 0) {
 			throw new AdempiereException("Periodical does not allow renewal");
 		}
 		
-		MPeriodicalSubscriber subscriber = new MPeriodicalSubscriber(ctx, subscriber_id, null);
+		MPeriodicalSubscriber subscriber = new MPeriodicalSubscriber(ctx, subscriber_id, trxname);
 		if (!subscriber.isrenewAutomatically() && subscriber_id > 0)
 			throw new AdempiereException();
 		
