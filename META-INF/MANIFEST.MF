@@ -9,7 +9,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Activator: org.adempiere.plugin.utils.AdempiereActivator
 Require-Bundle: org.adempiere.base;bundle-version="9.0.0",
  org.adempiere.plugin.utils;bundle-version="9.0.0",
- org.adempiere.ui.zk;bundle-version="9.0.0"
+ org.adempiere.ui.zk;bundle-version="9.0.0",
+ org.idempiere.test,
+ org.junit.jupiter.api
 Export-Package: de.schoenbeck.periodicals.model,
  de.schoenbeck.periodicals.process
 Bundle-ActivationPolicy: lazy
