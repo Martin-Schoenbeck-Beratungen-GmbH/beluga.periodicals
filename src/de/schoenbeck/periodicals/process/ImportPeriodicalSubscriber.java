@@ -230,12 +230,12 @@ public class ImportPeriodicalSubscriber extends SvrProcess implements ImportProc
 	}
 	
 	private int findCountryID (String name) throws SQLException {
-		String sql = "WITH param AS (SELECT ? p_name)"
-				+ "SELECT C_Country_ID FROM c_country_trl cct, param"
-				+ "WHERE AD_Language = ?"
-				+ "AND upper(\"name\") = upper(param.p_name)"
-				+ "UNION SELECT c_country_id FROM c_country cc, param"
-				+ "WHERE upper(\"name\") = upper(param.p_name)"
+		String sql = "WITH param AS (SELECT ? p_name) "
+				+ "SELECT C_Country_ID FROM c_country_trl cct, param "
+				+ "WHERE AD_Language = ? "
+				+ "AND upper(\"name\") = upper(param.p_name) "
+				+ "UNION SELECT c_country_id FROM c_country cc, param "
+				+ "WHERE upper(\"name\") = upper(param.p_name) "
 				+ "OR upper(countrycode) = upper(param.p_name)";
 		PreparedStatement ps = DB.prepareStatement(sql, get_TrxName());
 		ResultSet rs = null;
