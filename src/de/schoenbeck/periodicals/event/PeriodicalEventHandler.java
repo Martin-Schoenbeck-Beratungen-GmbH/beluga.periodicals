@@ -39,9 +39,9 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 	@Override
 	protected void doHandleEvent(Event event) {
 		
-		Trx trx = Trx.get(Trx.createTrxName("PeriodicalEvent"), true);
-		
 		if (!event.getProperty("tableName").equals(MOrder.Table_Name)) return;
+		
+		Trx trx = Trx.get(Trx.createTrxName("PeriodicalEvent"), true);
 		
 		Properties ctx = Env.getCtx();
 		MOrder order = (MOrder) getPO(event);
