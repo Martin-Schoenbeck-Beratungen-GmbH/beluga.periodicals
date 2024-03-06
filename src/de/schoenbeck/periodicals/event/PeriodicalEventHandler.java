@@ -21,7 +21,6 @@ import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
-import org.compiere.util.Trx;
 import org.osgi.service.event.Event;
 
 import de.schoenbeck.periodicals.model.MPeriodical;
@@ -41,19 +40,17 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 		
 		if (!event.getProperty("tableName").equals(MOrder.Table_Name)) return;
 		
-		Trx trx = Trx.get(Trx.createTrxName("PeriodicalEvent"), true);
-		
 		Properties ctx = Env.getCtx();
 		MOrder order = (MOrder) getPO(event);
 		
 		// skip orders that have been used to create a subscriber before
-		if (isOrderUsedAlready(ctx, order.get_ID(), trx.getTrxName())) return;
+		if (isOrderUsedAlready(ctx, order.get_ID(), order.get_TrxName())) return;
 		
 		StringBuilder errs = new StringBuilder();
 		
-		for (SubInfo info : getSubscriptionInfo(ctx, order.get_ID(), trx.getTrxName())) {
+		for (SubInfo info : getSubscriptionInfo(ctx, order.get_ID(), order.get_TrxName())) {
 			try {
-				createSubscriberFromSubInfo(ctx, info.line, info.periodical_id, info.frequency, info.frequencyType, info.editionspaid, info.qtyplan, info.isRenew, trx.getTrxName());
+				createSubscriberFromSubInfo(ctx, info.line, info.periodical_id, info.frequency, info.frequencyType, info.editionspaid, info.qtyplan, info.isRenew, order.get_TrxName());
 			} catch (RuntimeException e) {
 				String msg = Msg.getMsg(Env.getCtx(), "AddingSubscriberFailed", new Object[] {info.line.getProduct().getName()});
 				errs.append(msg).append("\n")
@@ -61,12 +58,11 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 				CLogger.get().log(Level.SEVERE, "", e);
 			}
 		}
-
-		trx.commit();
-		trx.close();
 		
-		if (errs.length() > 0)
+		if (errs.length() > 0) {
 			addErrorMessage(event, errs.toString());
+		}
+		
 	}
 	
 	private boolean isOrderUsedAlready (Properties ctx, int order_id, String trxname) {
