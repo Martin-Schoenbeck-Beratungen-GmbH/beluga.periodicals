@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Periodicals
 Bundle-SymbolicName: beluga.periodicals
-Bundle-Version: 2.3.0.qualifier
+Bundle-Version: 2.4.0.qualifier
 Service-Component: OSGI-INF/*.xml
 Automatic-Module-Name: beluga.periodicals
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Activator: org.adempiere.plugin.utils.AdempiereActivator
 Require-Bundle: org.adempiere.base;bundle-version="9.0.0",
  org.adempiere.plugin.utils;bundle-version="9.0.0",
