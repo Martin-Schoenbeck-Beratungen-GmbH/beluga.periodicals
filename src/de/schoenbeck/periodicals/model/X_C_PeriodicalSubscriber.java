@@ -25,16 +25,16 @@ import org.compiere.model.*;
 import org.compiere.util.Env;
 
 /** Generated Model for C_PeriodicalSubscriber
- *  @author iDempiere (generated) 
- *  @version Release 9 - $Id$ */
+ *  @author iDempiere (generated)
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="C_PeriodicalSubscriber")
-public class X_C_PeriodicalSubscriber extends PO implements I_C_PeriodicalSubscriber, I_Persistent 
+public class X_C_PeriodicalSubscriber extends PO implements I_C_PeriodicalSubscriber, I_Persistent
 {
 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20230330L;
+	private static final long serialVersionUID = 20250327L;
 
     /** Standard Constructor */
     public X_C_PeriodicalSubscriber (Properties ctx, int C_PeriodicalSubscriber_ID, String trxName)
@@ -62,6 +62,32 @@ public class X_C_PeriodicalSubscriber extends PO implements I_C_PeriodicalSubscr
         } */
     }
 
+    /** Standard Constructor */
+    public X_C_PeriodicalSubscriber (Properties ctx, String C_PeriodicalSubscriber_UU, String trxName)
+    {
+      super (ctx, C_PeriodicalSubscriber_UU, trxName);
+      /** if (C_PeriodicalSubscriber_UU == null)
+        {
+			setC_PeriodicalSubscriber_ID (0);
+			setC_Periodical_ID (0);
+			setEditionsPaid (0);
+			setSubscribedUntil (new Timestamp( System.currentTimeMillis() ));
+        } */
+    }
+
+    /** Standard Constructor */
+    public X_C_PeriodicalSubscriber (Properties ctx, String C_PeriodicalSubscriber_UU, String trxName, String ... virtualColumns)
+    {
+      super (ctx, C_PeriodicalSubscriber_UU, trxName, virtualColumns);
+      /** if (C_PeriodicalSubscriber_UU == null)
+        {
+			setC_PeriodicalSubscriber_ID (0);
+			setC_Periodical_ID (0);
+			setEditionsPaid (0);
+			setSubscribedUntil (new Timestamp( System.currentTimeMillis() ));
+        } */
+    }
+
     /** Load Constructor */
     public X_C_PeriodicalSubscriber (Properties ctx, ResultSet rs, String trxName)
     {
@@ -69,7 +95,7 @@ public class X_C_PeriodicalSubscriber extends PO implements I_C_PeriodicalSubscr
     }
 
     /** AccessLevel
-      * @return 3 - Client - Org 
+      * @return 7 - System - Client - Org
       */
     protected int get_AccessLevel()
     {
@@ -266,6 +292,33 @@ public class X_C_PeriodicalSubscriber extends PO implements I_C_PeriodicalSubscr
 		return (String)get_Value(COLUMNNAME_C_PeriodicalSubscriber_UU);
 	}
 
+	public I_C_PeriodicalSubscription getC_PeriodicalSubscription() throws RuntimeException
+	{
+		return (I_C_PeriodicalSubscription)MTable.get(getCtx(), I_C_PeriodicalSubscription.Table_ID)
+			.getPO(getC_PeriodicalSubscription_ID(), get_TrxName());
+	}
+
+	/** Set Periodical Subscription.
+		@param C_PeriodicalSubscription_ID Periodical Subscription
+	*/
+	public void setC_PeriodicalSubscription_ID (int C_PeriodicalSubscription_ID)
+	{
+		if (C_PeriodicalSubscription_ID < 1)
+			set_Value (COLUMNNAME_C_PeriodicalSubscription_ID, null);
+		else
+			set_Value (COLUMNNAME_C_PeriodicalSubscription_ID, Integer.valueOf(C_PeriodicalSubscription_ID));
+	}
+
+	/** Get Periodical Subscription.
+		@return Periodical Subscription	  */
+	public int getC_PeriodicalSubscription_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_PeriodicalSubscription_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public I_C_Periodical getC_Periodical() throws RuntimeException
 	{
 		return (I_C_Periodical)MTable.get(getCtx(), I_C_Periodical.Table_ID)
@@ -328,12 +381,31 @@ public class X_C_PeriodicalSubscriber extends PO implements I_C_PeriodicalSubscr
 		return (String)get_Value(COLUMNNAME_POReference);
 	}
 
+	/** Set Ordered Quantity.
+		@param QtyOrdered Ordered Quantity
+	*/
+	public void setQtyOrdered (BigDecimal QtyOrdered)
+	{
+		set_Value (COLUMNNAME_QtyOrdered, QtyOrdered);
+	}
+
+	/** Get Ordered Quantity.
+		@return Ordered Quantity
+	  */
+	public BigDecimal getQtyOrdered()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_QtyOrdered);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set Quantity Plan.
 		@param QtyPlan Planned Quantity
 	*/
 	public void setQtyPlan (BigDecimal QtyPlan)
 	{
-		set_Value (COLUMNNAME_QtyPlan, QtyPlan);
+		set_ValueNoCheck (COLUMNNAME_QtyPlan, QtyPlan);
 	}
 
 	/** Get Quantity Plan.
@@ -393,10 +465,10 @@ public class X_C_PeriodicalSubscriber extends PO implements I_C_PeriodicalSubscr
 	public boolean isrenewAutomatically()
 	{
 		Object oo = get_Value(COLUMNNAME_renewAutomatically);
-		if (oo != null) 
+		if (oo != null)
 		{
-			 if (oo instanceof Boolean) 
-				 return ((Boolean)oo).booleanValue(); 
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;

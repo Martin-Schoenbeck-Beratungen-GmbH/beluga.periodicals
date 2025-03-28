@@ -25,16 +25,16 @@ import org.compiere.model.*;
 import org.compiere.util.Env;
 
 /** Generated Model for C_PeriodicalEdition
- *  @author iDempiere (generated) 
- *  @version Release 9 - $Id$ */
+ *  @author iDempiere (generated)
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="C_PeriodicalEdition")
-public class X_C_PeriodicalEdition extends PO implements I_C_PeriodicalEdition, I_Persistent 
+public class X_C_PeriodicalEdition extends PO implements I_C_PeriodicalEdition, I_Persistent
 {
 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20220502L;
+	private static final long serialVersionUID = 20250327L;
 
     /** Standard Constructor */
     public X_C_PeriodicalEdition (Properties ctx, int C_PeriodicalEdition_ID, String trxName)
@@ -68,6 +68,38 @@ public class X_C_PeriodicalEdition extends PO implements I_C_PeriodicalEdition, 
         } */
     }
 
+    /** Standard Constructor */
+    public X_C_PeriodicalEdition (Properties ctx, String C_PeriodicalEdition_UU, String trxName)
+    {
+      super (ctx, C_PeriodicalEdition_UU, trxName);
+      /** if (C_PeriodicalEdition_UU == null)
+        {
+			setC_PeriodicalEdition_ID (0);
+			setC_Periodical_ID (0);
+			setEditionNo (0);
+			setIntroducedOn (new Timestamp( System.currentTimeMillis() ));
+// @#Date@
+			setM_Product_ID (0);
+			setName (null);
+        } */
+    }
+
+    /** Standard Constructor */
+    public X_C_PeriodicalEdition (Properties ctx, String C_PeriodicalEdition_UU, String trxName, String ... virtualColumns)
+    {
+      super (ctx, C_PeriodicalEdition_UU, trxName, virtualColumns);
+      /** if (C_PeriodicalEdition_UU == null)
+        {
+			setC_PeriodicalEdition_ID (0);
+			setC_Periodical_ID (0);
+			setEditionNo (0);
+			setIntroducedOn (new Timestamp( System.currentTimeMillis() ));
+// @#Date@
+			setM_Product_ID (0);
+			setName (null);
+        } */
+    }
+
     /** Load Constructor */
     public X_C_PeriodicalEdition (Properties ctx, ResultSet rs, String trxName)
     {
@@ -75,7 +107,7 @@ public class X_C_PeriodicalEdition extends PO implements I_C_PeriodicalEdition, 
     }
 
     /** AccessLevel
-      * @return 7 - System - Client - Org 
+      * @return 7 - System - Client - Org
       */
     protected int get_AccessLevel()
     {

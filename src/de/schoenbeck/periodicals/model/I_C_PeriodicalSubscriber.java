@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for C_PeriodicalSubscriber
  *  @author iDempiere (generated) 
- *  @version Release 9
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_C_PeriodicalSubscriber 
@@ -37,17 +37,17 @@ public interface I_C_PeriodicalSubscriber
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 7 - System - Client - Org 
      */
-    BigDecimal accessLevel = BigDecimal.valueOf(3);
+    BigDecimal accessLevel = BigDecimal.valueOf(7);
 
     /** Load Meta Data */
 
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
-	/** Get Client.
-	  * Client/Tenant for this installation.
+	/** Get Tenant.
+	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
 
@@ -55,12 +55,12 @@ public interface I_C_PeriodicalSubscriber
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
 	/** Set Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
 	/** Get Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
 
@@ -157,6 +157,17 @@ public interface I_C_PeriodicalSubscriber
 	/** Get C_PeriodicalSubscriber_UU	  */
 	public String getC_PeriodicalSubscriber_UU();
 
+    /** Column name C_PeriodicalSubscription_ID */
+    public static final String COLUMNNAME_C_PeriodicalSubscription_ID = "C_PeriodicalSubscription_ID";
+
+	/** Set Periodical Subscription	  */
+	public void setC_PeriodicalSubscription_ID (int C_PeriodicalSubscription_ID);
+
+	/** Get Periodical Subscription	  */
+	public int getC_PeriodicalSubscription_ID();
+
+	public I_C_PeriodicalSubscription getC_PeriodicalSubscription() throws RuntimeException;
+
     /** Column name C_Periodical_ID */
     public static final String COLUMNNAME_C_Periodical_ID = "C_Periodical_ID";
 
@@ -222,6 +233,19 @@ public interface I_C_PeriodicalSubscriber
 	  * Transaction Reference Number (Sales Order, Purchase Order) of your Business Partner
 	  */
 	public String getPOReference();
+
+    /** Column name QtyOrdered */
+    public static final String COLUMNNAME_QtyOrdered = "QtyOrdered";
+
+	/** Set Ordered Quantity.
+	  * Ordered Quantity
+	  */
+	public void setQtyOrdered (BigDecimal QtyOrdered);
+
+	/** Get Ordered Quantity.
+	  * Ordered Quantity
+	  */
+	public BigDecimal getQtyOrdered();
 
     /** Column name QtyPlan */
     public static final String COLUMNNAME_QtyPlan = "QtyPlan";

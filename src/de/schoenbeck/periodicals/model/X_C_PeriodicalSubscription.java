@@ -24,16 +24,16 @@ import org.compiere.model.*;
 import org.compiere.util.Env;
 
 /** Generated Model for C_PeriodicalSubscription
- *  @author iDempiere (generated) 
- *  @version Release 9 - $Id$ */
+ *  @author iDempiere (generated)
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="C_PeriodicalSubscription")
-public class X_C_PeriodicalSubscription extends PO implements I_C_PeriodicalSubscription, I_Persistent 
+public class X_C_PeriodicalSubscription extends PO implements I_C_PeriodicalSubscription, I_Persistent
 {
 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20220502L;
+	private static final long serialVersionUID = 20250327L;
 
     /** Standard Constructor */
     public X_C_PeriodicalSubscription (Properties ctx, int C_PeriodicalSubscription_ID, String trxName)
@@ -45,11 +45,11 @@ public class X_C_PeriodicalSubscription extends PO implements I_C_PeriodicalSubs
 			setEditionsPaid (0);
 			setFrequency (0);
 			setFrequencyType (null);
-			setisRenewal (false);
-// N
 			setM_Product_ID (0);
 			setName (null);
 			setQtyPlan (Env.ZERO);
+			setisRenewal (false);
+// N
         } */
     }
 
@@ -63,11 +63,47 @@ public class X_C_PeriodicalSubscription extends PO implements I_C_PeriodicalSubs
 			setEditionsPaid (0);
 			setFrequency (0);
 			setFrequencyType (null);
-			setisRenewal (false);
-// N
 			setM_Product_ID (0);
 			setName (null);
 			setQtyPlan (Env.ZERO);
+			setisRenewal (false);
+// N
+        } */
+    }
+
+    /** Standard Constructor */
+    public X_C_PeriodicalSubscription (Properties ctx, String C_PeriodicalSubscription_UU, String trxName)
+    {
+      super (ctx, C_PeriodicalSubscription_UU, trxName);
+      /** if (C_PeriodicalSubscription_UU == null)
+        {
+			setC_PeriodicalSubscription_ID (0);
+			setEditionsPaid (0);
+			setFrequency (0);
+			setFrequencyType (null);
+			setM_Product_ID (0);
+			setName (null);
+			setQtyPlan (Env.ZERO);
+			setisRenewal (false);
+// N
+        } */
+    }
+
+    /** Standard Constructor */
+    public X_C_PeriodicalSubscription (Properties ctx, String C_PeriodicalSubscription_UU, String trxName, String ... virtualColumns)
+    {
+      super (ctx, C_PeriodicalSubscription_UU, trxName, virtualColumns);
+      /** if (C_PeriodicalSubscription_UU == null)
+        {
+			setC_PeriodicalSubscription_ID (0);
+			setEditionsPaid (0);
+			setFrequency (0);
+			setFrequencyType (null);
+			setM_Product_ID (0);
+			setName (null);
+			setQtyPlan (Env.ZERO);
+			setisRenewal (false);
+// N
         } */
     }
 
@@ -78,7 +114,7 @@ public class X_C_PeriodicalSubscription extends PO implements I_C_PeriodicalSubs
     }
 
     /** AccessLevel
-      * @return 7 - System - Client - Org 
+      * @return 7 - System - Client - Org
       */
     protected int get_AccessLevel()
     {
@@ -98,33 +134,6 @@ public class X_C_PeriodicalSubscription extends PO implements I_C_PeriodicalSubs
         .append(get_ID()).append(",Name=").append(getName()).append("]");
       return sb.toString();
     }
-
-	public I_C_Periodical getC_Periodical() throws RuntimeException
-	{
-		return (I_C_Periodical)MTable.get(getCtx(), I_C_Periodical.Table_ID)
-			.getPO(getC_Periodical_ID(), get_TrxName());
-	}
-
-	/** Set Periodical.
-		@param C_Periodical_ID Periodical
-	*/
-	public void setC_Periodical_ID (int C_Periodical_ID)
-	{
-		if (C_Periodical_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_C_Periodical_ID, null);
-		else
-			set_ValueNoCheck (COLUMNNAME_C_Periodical_ID, Integer.valueOf(C_Periodical_ID));
-	}
-
-	/** Get Periodical.
-		@return Periodical	  */
-	public int getC_Periodical_ID()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_C_Periodical_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
 
 	/** Set Periodical Subscription.
 		@param C_PeriodicalSubscription_ID Periodical Subscription
@@ -160,6 +169,33 @@ public class X_C_PeriodicalSubscription extends PO implements I_C_PeriodicalSubs
 	public String getC_PeriodicalSubscription_UU()
 	{
 		return (String)get_Value(COLUMNNAME_C_PeriodicalSubscription_UU);
+	}
+
+	public I_C_Periodical getC_Periodical() throws RuntimeException
+	{
+		return (I_C_Periodical)MTable.get(getCtx(), I_C_Periodical.Table_ID)
+			.getPO(getC_Periodical_ID(), get_TrxName());
+	}
+
+	/** Set Periodical.
+		@param C_Periodical_ID Periodical
+	*/
+	public void setC_Periodical_ID (int C_Periodical_ID)
+	{
+		if (C_Periodical_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_C_Periodical_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_C_Periodical_ID, Integer.valueOf(C_Periodical_ID));
+	}
+
+	/** Get Periodical.
+		@return Periodical	  */
+	public int getC_Periodical_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Periodical_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set Description.
@@ -239,29 +275,6 @@ public class X_C_PeriodicalSubscription extends PO implements I_C_PeriodicalSubs
 		return (String)get_Value(COLUMNNAME_FrequencyType);
 	}
 
-	/** Set is renewal.
-		@param isRenewal Whether this represents a new subscription (false) or a renewal of an old one (true)
-	*/
-	public void setisRenewal (boolean isRenewal)
-	{
-		set_Value (COLUMNNAME_isRenewal, Boolean.valueOf(isRenewal));
-	}
-
-	/** Get is renewal.
-		@return Whether this represents a new subscription (false) or a renewal of an old one (true)
-	  */
-	public boolean isRenewal()
-	{
-		Object oo = get_Value(COLUMNNAME_isRenewal);
-		if (oo != null) 
-		{
-			 if (oo instanceof Boolean) 
-				 return ((Boolean)oo).booleanValue(); 
-			return "Y".equals(oo);
-		}
-		return false;
-	}
-
 	public org.compiere.model.I_M_Product getM_Product() throws RuntimeException
 	{
 		return (org.compiere.model.I_M_Product)MTable.get(getCtx(), org.compiere.model.I_M_Product.Table_ID)
@@ -323,5 +336,28 @@ public class X_C_PeriodicalSubscription extends PO implements I_C_PeriodicalSubs
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	/** Set is renewal.
+		@param isRenewal Whether this represents a new subscription (false) or a renewal of an old one (true)
+	*/
+	public void setisRenewal (boolean isRenewal)
+	{
+		set_Value (COLUMNNAME_isRenewal, Boolean.valueOf(isRenewal));
+	}
+
+	/** Get is renewal.
+		@return Whether this represents a new subscription (false) or a renewal of an old one (true)
+	  */
+	public boolean isRenewal()
+	{
+		Object oo = get_Value(COLUMNNAME_isRenewal);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 }

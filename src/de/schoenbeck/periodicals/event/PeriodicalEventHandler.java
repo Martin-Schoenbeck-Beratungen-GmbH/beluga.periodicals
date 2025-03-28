@@ -50,7 +50,7 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 		
 		for (SubInfo info : getSubscriptionInfo(ctx, order.get_ID(), order.get_TrxName())) {
 			try {
-				createSubscriberFromSubInfo(ctx, info.line, info.periodical_id, info.frequency, info.frequencyType, info.editionspaid, info.qtyplan, info.isRenew, order.get_TrxName());
+				createSubscriberFromSubInfo(ctx, info.line, info.periodical_id, info.frequency, info.frequencyType, info.editionspaid, info.qtyplan, info.isRenew, info.periodicalSubscription_id, info.line.getQtyEntered(), order.get_TrxName());
 			} catch (RuntimeException e) {
 				String msg = Msg.getMsg(Env.getCtx(), "AddingSubscriberFailed", new Object[] {info.line.getProduct().getName()});
 				errs.append(msg).append("\n")
@@ -85,7 +85,7 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 		
 		LinkedList<SubInfo> rtn = new LinkedList<>();
 		
-		String sql = "SELECT co.c_orderline_id, cp.c_periodical_id, cps.frequency, cps.frequencytype, cps.editionspaid, cps.qtyplan, cps.isrenewal "
+		String sql = "SELECT co.c_orderline_id, cp.c_periodical_id, cps.frequency, cps.frequencytype, cps.editionspaid, cps.qtyplan, cps.isrenewal, cps.c_periodicalsubscription_id "
 				+ "FROM c_orderline co "
 				+ "JOIN c_periodicalsubscription cps "
 				+ "	ON cps.m_product_id = co.m_product_id "
@@ -113,7 +113,8 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 						rs.getString("frequencytype").charAt(0),
 						rs.getInt("editionspaid"),
 						rs.getBigDecimal("qtyplan"),
-						rs.getBoolean("isrenewal")
+						rs.getBoolean("isrenewal"),
+						rs.getInt("c_periodicalsubscription_id")
 						));
 			}
 		} catch (SQLException e) {
@@ -139,7 +140,7 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 	 */
 	private void createSubscriberFromSubInfo (
 			Properties ctx, MOrderLine line, int periodical_id, int frequency, char frequencyType, int editionspaid, 
-			BigDecimal qtyPlan, boolean isRenew, String trxname) {
+			BigDecimal qtyPlan, boolean isRenew, int periodicalSubscription_id, BigDecimal qtyOrdered, String trxname) {
 		
 		String where = MPeriodical.COLUMNNAME_C_Periodical_ID + " = " + periodical_id +
 				" AND " + MPeriodicalSubscriber.COLUMNNAME_C_BPartner_ID + " = " + line.getC_BPartner_ID() +
@@ -158,6 +159,9 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 			throw new AdempiereException();
 		
 		I_C_Order currentOrder = line.getC_Order();
+		
+		subscriber.setQtyOrdered(qtyOrdered);
+		subscriber.setC_PeriodicalSubscription_ID(periodicalSubscription_id);
 		
 		subscriber.setAD_Org_ID(line.getAD_Org_ID());
 		subscriber.setC_Periodical_ID(periodical_id);
@@ -185,24 +189,15 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 	}
 	
 	
-	private class SubInfo {
-		public final MOrderLine line;
-		public final int periodical_id;
-		public final int frequency;
-		public final char frequencyType;
-		public final int editionspaid;
-		public final BigDecimal qtyplan;
-		public final boolean isRenew;
+	private record SubInfo (
+		MOrderLine line,
+		int periodical_id,
+		int frequency,
+		char frequencyType,
+		int editionspaid,
+		BigDecimal qtyplan,
+		boolean isRenew,
+		int periodicalSubscription_id){}
 		
-		SubInfo (MOrderLine line, int periodical_id, int frequency, char frequencyType, int editionspaid, BigDecimal qtyplan, boolean isRenew) {
-			this.line = line;
-			this.periodical_id = periodical_id;
-			this.frequency = frequency;
-			this.frequencyType = frequencyType;
-			this.editionspaid = editionspaid;
-			this.qtyplan = qtyplan;
-			this.isRenew = isRenew;
-		}
-	}
 
 }

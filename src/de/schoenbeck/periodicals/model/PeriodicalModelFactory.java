@@ -14,6 +14,7 @@ public class PeriodicalModelFactory implements IModelFactory {
 		case MPeriodical.Table_Name: return MPeriodical.class;
 		case MPeriodicalEdition.Table_Name: return MPeriodicalEdition.class;
 		case MPeriodicalSubscriber.Table_Name: return MPeriodicalSubscriber.class;
+		case X_C_PeriodicalSubscription.Table_Name: return X_C_PeriodicalSubscription.class;
 		}
 		return null;
 	}
@@ -24,6 +25,7 @@ public class PeriodicalModelFactory implements IModelFactory {
 		case MPeriodical.Table_Name: return new MPeriodical(Env.getCtx(), Record_ID, trxName);
 		case MPeriodicalEdition.Table_Name: return new MPeriodicalEdition(Env.getCtx(), Record_ID, trxName);
 		case MPeriodicalSubscriber.Table_Name: return new MPeriodicalSubscriber(Env.getCtx(), Record_ID, trxName);
+		case X_C_PeriodicalSubscription.Table_Name: return new X_C_PeriodicalSubscription(Env.getCtx(), Record_ID, trxName);
 		}
 		return null;
 	}
@@ -34,6 +36,7 @@ public class PeriodicalModelFactory implements IModelFactory {
 		case MPeriodical.Table_Name: return new MPeriodical(Env.getCtx(), rs, trxName);
 		case MPeriodicalEdition.Table_Name: return new MPeriodicalEdition(Env.getCtx(), rs, trxName);
 		case MPeriodicalSubscriber.Table_Name: return new MPeriodicalSubscriber(Env.getCtx(), rs, trxName);
+		case X_C_PeriodicalSubscription.Table_Name: return new X_C_PeriodicalSubscription(Env.getCtx(), rs, trxName);
 		}
 		return null;
 	}

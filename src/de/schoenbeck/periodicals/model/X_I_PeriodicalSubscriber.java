@@ -24,16 +24,16 @@ import org.compiere.model.*;
 import org.compiere.util.Env;
 
 /** Generated Model for I_PeriodicalSubscriber
- *  @author iDempiere (generated) 
- *  @version Release 10 - $Id$ */
+ *  @author iDempiere (generated)
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="I_PeriodicalSubscriber")
-public class X_I_PeriodicalSubscriber extends PO implements I_I_PeriodicalSubscriber, I_Persistent 
+public class X_I_PeriodicalSubscriber extends PO implements I_I_PeriodicalSubscriber, I_Persistent
 {
 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20230808L;
+	private static final long serialVersionUID = 20250327L;
 
     /** Standard Constructor */
     public X_I_PeriodicalSubscriber (Properties ctx, int I_PeriodicalSubscriber_ID, String trxName)
@@ -55,6 +55,26 @@ public class X_I_PeriodicalSubscriber extends PO implements I_I_PeriodicalSubscr
         } */
     }
 
+    /** Standard Constructor */
+    public X_I_PeriodicalSubscriber (Properties ctx, String I_PeriodicalSubscriber_UU, String trxName)
+    {
+      super (ctx, I_PeriodicalSubscriber_UU, trxName);
+      /** if (I_PeriodicalSubscriber_UU == null)
+        {
+			setI_PeriodicalSubscriber_ID (0);
+        } */
+    }
+
+    /** Standard Constructor */
+    public X_I_PeriodicalSubscriber (Properties ctx, String I_PeriodicalSubscriber_UU, String trxName, String ... virtualColumns)
+    {
+      super (ctx, I_PeriodicalSubscriber_UU, trxName, virtualColumns);
+      /** if (I_PeriodicalSubscriber_UU == null)
+        {
+			setI_PeriodicalSubscriber_ID (0);
+        } */
+    }
+
     /** Load Constructor */
     public X_I_PeriodicalSubscriber (Properties ctx, ResultSet rs, String trxName)
     {
@@ -62,7 +82,7 @@ public class X_I_PeriodicalSubscriber extends PO implements I_I_PeriodicalSubscr
     }
 
     /** AccessLevel
-      * @return 2 - Client 
+      * @return 2 - Client
       */
     protected int get_AccessLevel()
     {
@@ -163,6 +183,37 @@ public class X_I_PeriodicalSubscriber extends PO implements I_I_PeriodicalSubscr
 		return (String)get_Value(COLUMNNAME_Address5);
 	}
 
+	/** Set BP Search Key.
+		@param BPValue Business Partner Key Value
+	*/
+	public void setBPValue (String BPValue)
+	{
+		set_Value (COLUMNNAME_BPValue, BPValue);
+	}
+
+	/** Get BP Search Key.
+		@return Business Partner Key Value
+	  */
+	public String getBPValue()
+	{
+		return (String)get_Value(COLUMNNAME_BPValue);
+	}
+
+	/** Set Invoice Partner Key.
+		@param Bill_BPValue Invoice Partner Key
+	*/
+	public void setBill_BPValue (String Bill_BPValue)
+	{
+		set_Value (COLUMNNAME_Bill_BPValue, Bill_BPValue);
+	}
+
+	/** Get Invoice Partner Key.
+		@return Invoice Partner Key	  */
+	public String getBill_BPValue()
+	{
+		return (String)get_Value(COLUMNNAME_Bill_BPValue);
+	}
+
 	public org.compiere.model.I_C_BPartner getBill_BPartner() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -191,21 +242,6 @@ public class X_I_PeriodicalSubscriber extends PO implements I_I_PeriodicalSubscr
 		return ii.intValue();
 	}
 
-	/** Set Invoice Partner Key.
-		@param Bill_BPValue Invoice Partner Key
-	*/
-	public void setBill_BPValue (String Bill_BPValue)
-	{
-		set_Value (COLUMNNAME_Bill_BPValue, Bill_BPValue);
-	}
-
-	/** Get Invoice Partner Key.
-		@return Invoice Partner Key	  */
-	public String getBill_BPValue()
-	{
-		return (String)get_Value(COLUMNNAME_Bill_BPValue);
-	}
-
 	public org.compiere.model.I_C_BPartner_Location getBill_Location() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner_Location)MTable.get(getCtx(), org.compiere.model.I_C_BPartner_Location.Table_ID)
@@ -232,37 +268,6 @@ public class X_I_PeriodicalSubscriber extends PO implements I_I_PeriodicalSubscr
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
-	}
-
-	/** Set bp_location_name.
-		@param bp_location_name bp_location_name
-	*/
-	public void setbp_location_name (String bp_location_name)
-	{
-		set_Value (COLUMNNAME_bp_location_name, bp_location_name);
-	}
-
-	/** Get bp_location_name.
-		@return bp_location_name	  */
-	public String getbp_location_name()
-	{
-		return (String)get_Value(COLUMNNAME_bp_location_name);
-	}
-
-	/** Set BP Search Key.
-		@param BPValue Business Partner Key Value
-	*/
-	public void setBPValue (String BPValue)
-	{
-		set_Value (COLUMNNAME_BPValue, BPValue);
-	}
-
-	/** Get BP Search Key.
-		@return Business Partner Key Value
-	  */
-	public String getBPValue()
-	{
-		return (String)get_Value(COLUMNNAME_BPValue);
 	}
 
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException
@@ -321,6 +326,33 @@ public class X_I_PeriodicalSubscriber extends PO implements I_I_PeriodicalSubscr
 		return ii.intValue();
 	}
 
+	public I_C_Periodical getC_Periodical() throws RuntimeException
+	{
+		return (I_C_Periodical)MTable.get(getCtx(), I_C_Periodical.Table_ID)
+			.getPO(getC_Periodical_ID(), get_TrxName());
+	}
+
+	/** Set Periodical.
+		@param C_Periodical_ID Periodical
+	*/
+	public void setC_Periodical_ID (int C_Periodical_ID)
+	{
+		if (C_Periodical_ID < 1)
+			set_Value (COLUMNNAME_C_Periodical_ID, null);
+		else
+			set_Value (COLUMNNAME_C_Periodical_ID, Integer.valueOf(C_Periodical_ID));
+	}
+
+	/** Get Periodical.
+		@return Periodical	  */
+	public int getC_Periodical_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Periodical_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set City.
 		@param City Identifies a City
 	*/
@@ -350,33 +382,6 @@ public class X_I_PeriodicalSubscriber extends PO implements I_I_PeriodicalSubscr
 	public String getCountry()
 	{
 		return (String)get_Value(COLUMNNAME_Country);
-	}
-
-	public I_C_Periodical getC_Periodical() throws RuntimeException
-	{
-		return (I_C_Periodical)MTable.get(getCtx(), I_C_Periodical.Table_ID)
-			.getPO(getC_Periodical_ID(), get_TrxName());
-	}
-
-	/** Set Periodical.
-		@param C_Periodical_ID Periodical
-	*/
-	public void setC_Periodical_ID (int C_Periodical_ID)
-	{
-		if (C_Periodical_ID < 1)
-			set_Value (COLUMNNAME_C_Periodical_ID, null);
-		else
-			set_Value (COLUMNNAME_C_Periodical_ID, Integer.valueOf(C_Periodical_ID));
-	}
-
-	/** Get Periodical.
-		@return Periodical	  */
-	public int getC_Periodical_ID()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_C_Periodical_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
 	}
 
 	/** Set Import Error Message.
@@ -409,29 +414,13 @@ public class X_I_PeriodicalSubscriber extends PO implements I_I_PeriodicalSubscr
 	public boolean isI_IsImported()
 	{
 		Object oo = get_Value(COLUMNNAME_I_IsImported);
-		if (oo != null) 
+		if (oo != null)
 		{
-			 if (oo instanceof Boolean) 
-				 return ((Boolean)oo).booleanValue(); 
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
-	}
-
-	/** Set Import Table.
-		@param ImportTable Import Table Columns from Database
-	*/
-	public void setImportTable (String ImportTable)
-	{
-		set_Value (COLUMNNAME_ImportTable, ImportTable);
-	}
-
-	/** Get Import Table.
-		@return Import Table Columns from Database
-	  */
-	public String getImportTable()
-	{
-		return (String)get_Value(COLUMNNAME_ImportTable);
 	}
 
 	/** Set Import Periodical Subscriber.
@@ -468,6 +457,22 @@ public class X_I_PeriodicalSubscriber extends PO implements I_I_PeriodicalSubscr
 	public String getI_PeriodicalSubscriber_UU()
 	{
 		return (String)get_Value(COLUMNNAME_I_PeriodicalSubscriber_UU);
+	}
+
+	/** Set Import Table.
+		@param ImportTable Import Table Columns from Database
+	*/
+	public void setImportTable (String ImportTable)
+	{
+		set_Value (COLUMNNAME_ImportTable, ImportTable);
+	}
+
+	/** Get Import Table.
+		@return Import Table Columns from Database
+	  */
+	public String getImportTable()
+	{
+		return (String)get_Value(COLUMNNAME_ImportTable);
 	}
 
 	/** Set Name.
@@ -548,10 +553,10 @@ public class X_I_PeriodicalSubscriber extends PO implements I_I_PeriodicalSubscr
 	public boolean isProcessed()
 	{
 		Object oo = get_Value(COLUMNNAME_Processed);
-		if (oo != null) 
+		if (oo != null)
 		{
-			 if (oo instanceof Boolean) 
-				 return ((Boolean)oo).booleanValue(); 
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
@@ -574,5 +579,20 @@ public class X_I_PeriodicalSubscriber extends PO implements I_I_PeriodicalSubscr
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	/** Set bp_location_name.
+		@param bp_location_name bp_location_name
+	*/
+	public void setbp_location_name (String bp_location_name)
+	{
+		set_Value (COLUMNNAME_bp_location_name, bp_location_name);
+	}
+
+	/** Get bp_location_name.
+		@return bp_location_name	  */
+	public String getbp_location_name()
+	{
+		return (String)get_Value(COLUMNNAME_bp_location_name);
 	}
 }

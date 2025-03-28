@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for C_PeriodicalSubscription
  *  @author iDempiere (generated) 
- *  @version Release 9
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_C_PeriodicalSubscription 
@@ -46,8 +46,8 @@ public interface I_C_PeriodicalSubscription
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
-	/** Get Client.
-	  * Client/Tenant for this installation.
+	/** Get Tenant.
+	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
 
@@ -55,25 +55,14 @@ public interface I_C_PeriodicalSubscription
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
 	/** Set Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
 	/** Get Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
-
-    /** Column name C_Periodical_ID */
-    public static final String COLUMNNAME_C_Periodical_ID = "C_Periodical_ID";
-
-	/** Set Periodical	  */
-	public void setC_Periodical_ID (int C_Periodical_ID);
-
-	/** Get Periodical	  */
-	public int getC_Periodical_ID();
-
-	public I_C_Periodical getC_Periodical() throws RuntimeException;
 
     /** Column name C_PeriodicalSubscription_ID */
     public static final String COLUMNNAME_C_PeriodicalSubscription_ID = "C_PeriodicalSubscription_ID";
@@ -92,6 +81,17 @@ public interface I_C_PeriodicalSubscription
 
 	/** Get C_PeriodicalSubscription_UU	  */
 	public String getC_PeriodicalSubscription_UU();
+
+    /** Column name C_Periodical_ID */
+    public static final String COLUMNNAME_C_Periodical_ID = "C_Periodical_ID";
+
+	/** Set Periodical	  */
+	public void setC_Periodical_ID (int C_Periodical_ID);
+
+	/** Get Periodical	  */
+	public int getC_Periodical_ID();
+
+	public I_C_Periodical getC_Periodical() throws RuntimeException;
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -174,19 +174,6 @@ public interface I_C_PeriodicalSubscription
 	  */
 	public boolean isActive();
 
-    /** Column name isRenewal */
-    public static final String COLUMNNAME_isRenewal = "isRenewal";
-
-	/** Set is renewal.
-	  * Whether this represents a new subscription (false) or a renewal of an old one (true)
-	  */
-	public void setisRenewal (boolean isRenewal);
-
-	/** Get is renewal.
-	  * Whether this represents a new subscription (false) or a renewal of an old one (true)
-	  */
-	public boolean isRenewal();
-
     /** Column name M_Product_ID */
     public static final String COLUMNNAME_M_Product_ID = "M_Product_ID";
 
@@ -243,4 +230,17 @@ public interface I_C_PeriodicalSubscription
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
+
+    /** Column name isRenewal */
+    public static final String COLUMNNAME_isRenewal = "isRenewal";
+
+	/** Set is renewal.
+	  * Whether this represents a new subscription (false) or a renewal of an old one (true)
+	  */
+	public void setisRenewal (boolean isRenewal);
+
+	/** Get is renewal.
+	  * Whether this represents a new subscription (false) or a renewal of an old one (true)
+	  */
+	public boolean isRenewal();
 }

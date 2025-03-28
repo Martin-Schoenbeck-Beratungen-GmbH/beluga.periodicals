@@ -1,24 +1,15 @@
 package de.schoenbeck.periodicals.process;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 
 import org.adempiere.exceptions.AdempiereException;
-import org.compiere.model.I_C_BPartner;
-import org.compiere.model.I_C_BPartner_Location;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MOrder;
 import org.compiere.model.MOrderLine;
@@ -27,7 +18,6 @@ import org.compiere.model.MProject;
 import org.compiere.model.Query;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
-import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 
@@ -52,8 +42,6 @@ public class OrdersFromPeriodical extends SvrProcess {
 	
 	MPeriodical periodical;
 	
-	List<Errors> errors;
-	
 	@Override
 	protected void prepare() {
 		for (ProcessInfoParameter pip : getParameter()) {
@@ -74,7 +62,6 @@ public class OrdersFromPeriodical extends SvrProcess {
 			editionno = new Query(getCtx(), MPeriodicalEdition.Table_Name, where, get_TrxName()).aggregate(expr, Query.AGGREGATE_MAX, Integer.class) + 1;
 		}
 		
-		errors = new LinkedList<>();
 	}
 
 	@Override
@@ -112,10 +99,6 @@ public class OrdersFromPeriodical extends SvrProcess {
 			count++;
 		}
 		
-		if (errors.size() > 0) {
-			processUI.download(writeErrorsToFile(errors));
-		}
-		
 		return Msg.getMsg(getCtx(), "OrdersFromPeriodicalCreated", new Object[] {count});
 	}
 
@@ -128,76 +111,30 @@ public class OrdersFromPeriodical extends SvrProcess {
 	 */
 	private void createRenewalOrder(MPeriodicalSubscriber subscriber, String description) throws ParseException, SQLException, AdempiereException {
 		
-		MOrder old;
-		MOrder renew;
+		if (subscriber.getC_PeriodicalSubscription_ID() == 0 || subscriber.getQtyOrdered() == null)
+				throw new AdempiereException("Renewal is faulty at " 
+					    + subscriber.getC_BPartner().getValue() + "_"
+						+ subscriber.getC_BPartner().getName() + " / "
+						+ subscriber.getBill_BPartner().getValue() + "_"
+						+ subscriber.getBill_BPartner().getName());
+			
 		
-		if (subscriber.getC_Order_ID() > 0) {
-			old = (MOrder) subscriber.getC_Order();
-		} else {
-			// find old
-			PreparedStatement ps = null;
-			ResultSet rs = null;
-			try {
-				String sql = "WITH params AS (SELECT "
-						+ "	? ad_client_id, "
-						+ "	? c_periodical_id, "
-						+ "	? c_bpartner_id, "
-						+ "	? c_bpartner_location_id, "
-						+ "	? bill_bpartner_id, "
-						+ "	? bill_location_id) "
-						+ "SELECT co.* FROM c_order co, params "
-						+ "WHERE co.isactive = 'Y' "
-						+ "AND co.c_order_id IN ( "
-							+ "SELECT c_order_id FROM c_orderline co2 "
-							+ "WHERE co2.m_product_id IN ( "
-								+ "SELECT m_product_id FROM c_periodicalsubscription cps "
-								+ "JOIN params "
-								+ "ON cps.c_periodical_id = params.c_periodical_id)) "
-						+ "AND co.c_bpartner_id = params.c_bpartner_id  "
-						+ "AND co.c_bpartner_location_id = params.c_bpartner_location_id  "
-						+ "AND co.bill_bpartner_id = params.bill_bpartner_id  "
-						+ "AND co.bill_location_id = params.bill_location_id  "
-						+ "ORDER BY updated DESC "
-						+ "FETCH FIRST 1 ROW ONLY";
+		MOrder renew = new MOrder(getCtx(), 0, get_TrxName());
 				
-				ps = DB.prepareStatement(sql, get_TrxName());
-				ps.setInt(1, getAD_Client_ID());
-				ps.setInt(2, subscriber.getC_Periodical_ID());
-				ps.setInt(3, subscriber.getC_BPartner_ID());
-				ps.setInt(4, subscriber.getC_BPartner_Location_ID());
-				ps.setInt(5, subscriber.getBill_BPartner_ID());
-				ps.setInt(6, subscriber.getBill_Location_ID());
-				
-				rs = ps.executeQuery();
-				if (!rs.next()) {
-					log.warning("No old order for: bpartner " + subscriber.getBill_BPartner_ID() + "; bill_bpartner " + subscriber.getBill_BPartner_ID() + "; periodical " + subscriber.getC_Periodical_ID());
-					errors.add(new Errors(
-							ErrorAt.RENEWAL,
-							subscriber.getC_BPartner(),
-							subscriber.getC_BPartner_Location(),
-							subscriber.getBill_BPartner(),
-							subscriber.getBill_Location(),
-							"No old order"
-							));
-					return;
-				}
-				old = new MOrder(getCtx(), rs, get_TrxName());
-			} finally {
-				DB.close(rs, ps);
-			}
-		}
-		
-		// copy values from old
-		Timestamp today = new Timestamp(new SimpleDateFormat("yyyy-MM-dd", Env.getLocale(getCtx()))
-				.parse( ((String) Env.getCtx().get(Env.DATE)).split(" ")[0] ).getTime());
-		renew = MOrder.copyFrom(old, today, old.getC_DocTypeTarget_ID(), old.isSOTrx(), false, false, get_TrxName());
-		
+		renew.setPOReference(subscriber.getPOReference());
+		renew.setC_BPartner_ID(subscriber.getC_BPartner_ID());
+		renew.setC_BPartner_Location_ID(subscriber.getC_BPartner_Location_ID());
+		renew.setBill_BPartner_ID(subscriber.getBill_BPartner_ID());
+		renew.setBill_Location_ID(subscriber.getBill_Location_ID());
 		renew.setDescription(description);
-		
 		renew.saveEx();
-		
-		subscriber.setC_Order_ID(renew.get_ID());
-		subscriber.saveEx();
+		MOrderLine line = new MOrderLine(renew);
+		line.setM_Product_ID(subscriber.getC_PeriodicalSubscription().getM_Product_ID());
+		line.setQtyEntered(subscriber.getQtyOrdered());
+		line.setPrice();
+		line.setPriceEntered(line.getPriceActual());
+		line.saveEx();
+
 	}
 
 	/**
@@ -259,89 +196,5 @@ public class OrdersFromPeriodical extends SvrProcess {
 		
 		return order;
 	}
-
-	/**
-	 * Creates a file called "belugaperiodicalerrors.txt" in the system's temporary directory and returns a reference.<br>
-	 * If it already exists, it is deleted first.
-	 * @param errors - A list of Objects representing errors
-	 * @return reference to the new file
-	 * @throws IOException
-	 */
-	private File writeErrorsToFile(List<?> errors) throws IOException {
-		
-		String path = System.getProperty("java.io.tmpdir") + "/belugaperiodicalerrors.txt";
-		File rtn = new File(path);
-		
-		// Remove old file
-		Files.deleteIfExists(rtn.toPath());
-		
-		// Write to file
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(rtn);
-			for (Object i : errors) {
-				writer.write(i.toString() + "\n\n");
-			}
-		} finally {
-			if (writer != null)
-				writer.close();
-		}
-		
-		return rtn;
-	}
 	
-	/**
-	 * This should be a record but records are not a part of Java 11.
-	 * @author Lukas Heidbreder, Martin Schönbeck Beratungen GmbH
-	 *
-	 */
-	private class Errors {
-		
-		@Override
-		public String toString() {
-			return "Error at: " + at 
-					+ "\n\tRecipient: " + c_bpartner.getValue() + "_" + c_bpartner.getName() + " (ID=" + c_bpartner.getC_BPartner_ID() + ")"
-					+ "\n\tLocation: " + c_bplocation.getName() + " (ID=" + c_bplocation.getC_BPartner_Location_ID() + ")"
-					+ "\n\tBillpartner: " + bill_bpartner.getValue() + "_" + bill_bpartner.getName() + " (ID=" + bill_bpartner.getC_BPartner_ID() + ")"
-					+ "\n\tLocation: " + c_billpartner_location.getName() + " (ID=" + c_billpartner_location.getC_BPartner_Location_ID() + ")"
-					+ "\n\tWith Message: " + msg;
-		}
-
-		public final ErrorAt at;
-		public final I_C_BPartner c_bpartner;
-		public final I_C_BPartner bill_bpartner;
-		public final I_C_BPartner_Location c_bplocation;
-		public final I_C_BPartner_Location c_billpartner_location;
-		public final String msg;
-		
-		public Errors (ErrorAt at, I_C_BPartner c_bpartner, I_C_BPartner_Location c_bplocation, 
-				I_C_BPartner bill_bpartner, I_C_BPartner_Location c_billpartner_location, String msg) {
-			this.at = at;
-			this.c_bpartner = c_bpartner;
-			this.bill_bpartner = bill_bpartner;
-			this.c_bplocation = c_bplocation;
-			this.c_billpartner_location = c_billpartner_location;
-			this.msg = msg;
-		}
-	}
-	
-	/**
-	 * Collection of every place this process may fail at
-	 * @author Lukas Heidbreder, Martin Schönbeck Beratungen GmbH
-	 *
-	 */
-	private static enum ErrorAt {
-		RENEWAL{
-			@Override
-			public String toString() {
-				return Msg.getMsg(Env.getCtx(), "Renewal");
-			}
-		},
-		RECEIPT {
-			@Override
-			public String toString() {
-				return Msg.getMsg(Env.getCtx(), "Receipt");
-			}
-		};
-	}
- }
+}

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Periodicals
 Bundle-SymbolicName: beluga.periodicals
-Bundle-Version: 2.4.0.qualifier
+Bundle-Version: 2.5.0.qualifier
 Service-Component: OSGI-INF/*.xml
 Automatic-Module-Name: beluga.periodicals
 Bundle-RequiredExecutionEnvironment: JavaSE-17

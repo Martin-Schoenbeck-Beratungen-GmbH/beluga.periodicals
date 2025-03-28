@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for I_PeriodicalSubscriber
  *  @author iDempiere (generated) 
- *  @version Release 10
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_I_PeriodicalSubscriber 
@@ -50,6 +50,19 @@ public interface I_I_PeriodicalSubscriber
 	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
+
+    /** Column name AD_Org_ID */
+    public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
+
+	/** Set Organization.
+	  * Organizational entity within tenant
+	  */
+	public void setAD_Org_ID (int AD_Org_ID);
+
+	/** Get Organization.
+	  * Organizational entity within tenant
+	  */
+	public int getAD_Org_ID();
 
     /** Column name Address1 */
     public static final String COLUMNNAME_Address1 = "Address1";
@@ -116,18 +129,27 @@ public interface I_I_PeriodicalSubscriber
 	  */
 	public String getAddress5();
 
-    /** Column name AD_Org_ID */
-    public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
+    /** Column name BPValue */
+    public static final String COLUMNNAME_BPValue = "BPValue";
 
-	/** Set Organization.
-	  * Organizational entity within tenant
+	/** Set BP Search Key.
+	  * Business Partner Key Value
 	  */
-	public void setAD_Org_ID (int AD_Org_ID);
+	public void setBPValue (String BPValue);
 
-	/** Get Organization.
-	  * Organizational entity within tenant
+	/** Get BP Search Key.
+	  * Business Partner Key Value
 	  */
-	public int getAD_Org_ID();
+	public String getBPValue();
+
+    /** Column name Bill_BPValue */
+    public static final String COLUMNNAME_Bill_BPValue = "Bill_BPValue";
+
+	/** Set Invoice Partner Key	  */
+	public void setBill_BPValue (String Bill_BPValue);
+
+	/** Get Invoice Partner Key	  */
+	public String getBill_BPValue();
 
     /** Column name Bill_BPartner_ID */
     public static final String COLUMNNAME_Bill_BPartner_ID = "Bill_BPartner_ID";
@@ -144,15 +166,6 @@ public interface I_I_PeriodicalSubscriber
 
 	public org.compiere.model.I_C_BPartner getBill_BPartner() throws RuntimeException;
 
-    /** Column name Bill_BPValue */
-    public static final String COLUMNNAME_Bill_BPValue = "Bill_BPValue";
-
-	/** Set Invoice Partner Key	  */
-	public void setBill_BPValue (String Bill_BPValue);
-
-	/** Get Invoice Partner Key	  */
-	public String getBill_BPValue();
-
     /** Column name Bill_Location_ID */
     public static final String COLUMNNAME_Bill_Location_ID = "Bill_Location_ID";
 
@@ -167,28 +180,6 @@ public interface I_I_PeriodicalSubscriber
 	public int getBill_Location_ID();
 
 	public org.compiere.model.I_C_BPartner_Location getBill_Location() throws RuntimeException;
-
-    /** Column name bp_location_name */
-    public static final String COLUMNNAME_bp_location_name = "bp_location_name";
-
-	/** Set bp_location_name	  */
-	public void setbp_location_name (String bp_location_name);
-
-	/** Get bp_location_name	  */
-	public String getbp_location_name();
-
-    /** Column name BPValue */
-    public static final String COLUMNNAME_BPValue = "BPValue";
-
-	/** Set BP Search Key.
-	  * Business Partner Key Value
-	  */
-	public void setBPValue (String BPValue);
-
-	/** Get BP Search Key.
-	  * Business Partner Key Value
-	  */
-	public String getBPValue();
 
     /** Column name C_BPartner_ID */
     public static final String COLUMNNAME_C_BPartner_ID = "C_BPartner_ID";
@@ -220,6 +211,17 @@ public interface I_I_PeriodicalSubscriber
 
 	public org.compiere.model.I_C_BPartner_Location getC_BPartner_Location() throws RuntimeException;
 
+    /** Column name C_Periodical_ID */
+    public static final String COLUMNNAME_C_Periodical_ID = "C_Periodical_ID";
+
+	/** Set Periodical	  */
+	public void setC_Periodical_ID (int C_Periodical_ID);
+
+	/** Get Periodical	  */
+	public int getC_Periodical_ID();
+
+	public I_C_Periodical getC_Periodical() throws RuntimeException;
+
     /** Column name City */
     public static final String COLUMNNAME_City = "City";
 
@@ -241,17 +243,6 @@ public interface I_I_PeriodicalSubscriber
 
 	/** Get Country	  */
 	public String getCountry();
-
-    /** Column name C_Periodical_ID */
-    public static final String COLUMNNAME_C_Periodical_ID = "C_Periodical_ID";
-
-	/** Set Periodical	  */
-	public void setC_Periodical_ID (int C_Periodical_ID);
-
-	/** Get Periodical	  */
-	public int getC_Periodical_ID();
-
-	public I_C_Periodical getC_Periodical() throws RuntimeException;
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -295,19 +286,6 @@ public interface I_I_PeriodicalSubscriber
 	  */
 	public boolean isI_IsImported();
 
-    /** Column name ImportTable */
-    public static final String COLUMNNAME_ImportTable = "ImportTable";
-
-	/** Set Import Table.
-	  * Import Table Columns from Database
-	  */
-	public void setImportTable (String ImportTable);
-
-	/** Get Import Table.
-	  * Import Table Columns from Database
-	  */
-	public String getImportTable();
-
     /** Column name I_PeriodicalSubscriber_ID */
     public static final String COLUMNNAME_I_PeriodicalSubscriber_ID = "I_PeriodicalSubscriber_ID";
 
@@ -325,6 +303,19 @@ public interface I_I_PeriodicalSubscriber
 
 	/** Get I_PeriodicalSubscriber_UU	  */
 	public String getI_PeriodicalSubscriber_UU();
+
+    /** Column name ImportTable */
+    public static final String COLUMNNAME_ImportTable = "ImportTable";
+
+	/** Set Import Table.
+	  * Import Table Columns from Database
+	  */
+	public void setImportTable (String ImportTable);
+
+	/** Get Import Table.
+	  * Import Table Columns from Database
+	  */
+	public String getImportTable();
 
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
@@ -432,4 +423,13 @@ public interface I_I_PeriodicalSubscriber
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
+
+    /** Column name bp_location_name */
+    public static final String COLUMNNAME_bp_location_name = "bp_location_name";
+
+	/** Set bp_location_name	  */
+	public void setbp_location_name (String bp_location_name);
+
+	/** Get bp_location_name	  */
+	public String getbp_location_name();
 }

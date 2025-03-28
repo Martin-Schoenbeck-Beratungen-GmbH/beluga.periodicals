@@ -23,16 +23,16 @@ import java.util.Properties;
 import org.compiere.model.*;
 
 /** Generated Model for C_Periodical
- *  @author iDempiere (generated) 
- *  @version Release 9 - $Id$ */
+ *  @author iDempiere (generated)
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="C_Periodical")
-public class X_C_Periodical extends PO implements I_C_Periodical, I_Persistent 
+public class X_C_Periodical extends PO implements I_C_Periodical, I_Persistent
 {
 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20220502L;
+	private static final long serialVersionUID = 20250327L;
 
     /** Standard Constructor */
     public X_C_Periodical (Properties ctx, int C_Periodical_ID, String trxName)
@@ -56,6 +56,28 @@ public class X_C_Periodical extends PO implements I_C_Periodical, I_Persistent
         } */
     }
 
+    /** Standard Constructor */
+    public X_C_Periodical (Properties ctx, String C_Periodical_UU, String trxName)
+    {
+      super (ctx, C_Periodical_UU, trxName);
+      /** if (C_Periodical_UU == null)
+        {
+			setC_Periodical_ID (0);
+			setName (null);
+        } */
+    }
+
+    /** Standard Constructor */
+    public X_C_Periodical (Properties ctx, String C_Periodical_UU, String trxName, String ... virtualColumns)
+    {
+      super (ctx, C_Periodical_UU, trxName, virtualColumns);
+      /** if (C_Periodical_UU == null)
+        {
+			setC_Periodical_ID (0);
+			setName (null);
+        } */
+    }
+
     /** Load Constructor */
     public X_C_Periodical (Properties ctx, ResultSet rs, String trxName)
     {
@@ -63,7 +85,7 @@ public class X_C_Periodical extends PO implements I_C_Periodical, I_Persistent
     }
 
     /** AccessLevel
-      * @return 3 - Client - Org 
+      * @return 3 - Client - Org
       */
     protected int get_AccessLevel()
     {
