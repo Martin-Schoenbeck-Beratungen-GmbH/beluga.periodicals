@@ -103,13 +103,12 @@ public class OrdersFromPeriodical extends SvrProcess {
 	}
 
 	/**
-	 * Look for the last order to contain a periodical bought by this 
-	 * @param subscriber
-	 * @throws ParseException
-	 * @throws SQLException
-	 * @throws AdempiereException
+	 * Create renewal order created from info stored in subscriber.
+	 * @param subscriber - The subscriber to be renewed
+	 * @param description - An optional order description
+	 * @throws AdempiereException - If renewal info is incomplete
 	 */
-	private void createRenewalOrder(MPeriodicalSubscriber subscriber, String description) throws ParseException, SQLException, AdempiereException {
+	private void createRenewalOrder(MPeriodicalSubscriber subscriber, String description) throws AdempiereException {
 		
 		if (subscriber.getC_PeriodicalSubscription_ID() == 0 || subscriber.getQtyOrdered() == null)
 				throw new AdempiereException("Renewal is faulty at " 
@@ -130,7 +129,7 @@ public class OrdersFromPeriodical extends SvrProcess {
 		renew.saveEx();
 		MOrderLine line = new MOrderLine(renew);
 		line.setM_Product_ID(subscriber.getC_PeriodicalSubscription().getM_Product_ID());
-		line.setQtyEntered(subscriber.getQtyOrdered());
+		line.setQty(subscriber.getQtyOrdered());
 		line.setPrice();
 		line.setPriceEntered(line.getPriceActual());
 		line.saveEx();
