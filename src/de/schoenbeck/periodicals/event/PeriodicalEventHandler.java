@@ -146,7 +146,6 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 				" AND " + MPeriodicalSubscriber.COLUMNNAME_C_BPartner_ID + " = " + line.getC_BPartner_ID() +
 				" AND " + MPeriodicalSubscriber.COLUMNNAME_Bill_BPartner_ID + " = " + line.getC_Order().getBill_BPartner_ID() +
 				" AND " + MPeriodicalSubscriber.COLUMNNAME_SubscribeDate + " < '" + Env.getCtx().get(Env.DATE) + "'" +
-				" AND " + MPeriodicalSubscriber.COLUMNNAME_SubscribedUntil + " >= '" + Env.getCtx().get(Env.DATE) + "'" +
 				" AND " + MPeriodicalSubscriber.COLUMNNAME_IsActive + " = 'Y'";
 		int subscriber_id = Math.max(new Query(ctx, MPeriodicalSubscriber.Table_Name, where, trxname).firstIdOnly(), 0);
 		

@@ -1,7 +1,6 @@
 package de.schoenbeck.periodicals.process;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -121,17 +120,19 @@ public class OrdersFromPeriodical extends SvrProcess {
 		MOrder renew = new MOrder(getCtx(), 0, get_TrxName());
 				
 		renew.setPOReference(subscriber.getPOReference());
-		renew.setC_BPartner_ID(subscriber.getC_BPartner_ID());
+		renew.setBPartner((MBPartner) subscriber.getC_BPartner());
 		renew.setC_BPartner_Location_ID(subscriber.getC_BPartner_Location_ID());
 		renew.setBill_BPartner_ID(subscriber.getBill_BPartner_ID());
 		renew.setBill_Location_ID(subscriber.getBill_Location_ID());
 		renew.setDescription(description);
+		renew.setDeliveryViaRule(MOrder.DELIVERYVIARULE_Delivery);
 		renew.saveEx();
 		MOrderLine line = new MOrderLine(renew);
 		line.setM_Product_ID(subscriber.getC_PeriodicalSubscription().getM_Product_ID());
 		line.setQty(subscriber.getQtyOrdered());
 		line.setPrice();
 		line.setPriceEntered(line.getPriceActual());
+		line.setTax();
 		line.saveEx();
 
 	}
