@@ -38,6 +38,7 @@ public class OrdersFromPeriodical extends SvrProcess {
 	BigDecimal qtyPlan;
 	boolean createOrders = true;
 	String p_description;
+	int m_warehouse_id;
 	
 	MPeriodical periodical;
 	
@@ -48,7 +49,8 @@ public class OrdersFromPeriodical extends SvrProcess {
 			case "M_Product_ID": m_product_id = pip.getParameterAsInt(); break;
 			case "EditionNo": editionno = pip.getParameterAsInt(); break;
 			case "QtyPlan": qtyPlan = pip.getParameterAsBigDecimal(); break;
-			case "CreateOrders": createOrders = pip.getParameterAsBoolean();
+			case "M_Warehouse_ID": m_warehouse_id = pip.getParameterAsInt(); break;
+			case "CreateOrders": createOrders = pip.getParameterAsBoolean(); break;
 			case "Description": p_description = pip.getParameterAsString();
 			}
 		}
@@ -86,11 +88,11 @@ public class OrdersFromPeriodical extends SvrProcess {
 			if (subscriber.isrenewAutomatically() &&
 					(subscriber.getEditionsPaid() <= 0 
 					|| subscriber.getSubscribedUntil().before(today))) {
-				createRenewalOrder(subscriber, billDescription);
+				createRenewalOrder(subscriber, billDescription, m_warehouse_id);
 			}
 
 			if (createOrders)
-				createOrder(subscriber, description);
+				createOrder(subscriber, description, m_warehouse_id);
 			
 			subscriber.setEditionsPaid(subscriber.getEditionsPaid()-1); //Reduce the leftover editions for this subscriber by 1
 			subscriber.saveEx(get_TrxName());
@@ -107,7 +109,7 @@ public class OrdersFromPeriodical extends SvrProcess {
 	 * @param description - An optional order description
 	 * @throws AdempiereException - If renewal info is incomplete
 	 */
-	private void createRenewalOrder(MPeriodicalSubscriber subscriber, String description) throws AdempiereException {
+	private void createRenewalOrder(MPeriodicalSubscriber subscriber, String description, int warehous_id) throws AdempiereException {
 		
 		if (subscriber.getC_PeriodicalSubscription_ID() == 0 || subscriber.getQtyOrdered() == null)
 				throw new AdempiereException("Renewal is faulty at " 
@@ -133,6 +135,8 @@ public class OrdersFromPeriodical extends SvrProcess {
 		line.setPrice();
 		line.setPriceEntered(line.getPriceActual());
 		line.setTax();
+		if (warehous_id != 0)
+			line.setM_Warehouse_ID(warehous_id);
 		line.saveEx();
 
 	}
@@ -167,7 +171,7 @@ public class OrdersFromPeriodical extends SvrProcess {
 	 * @param description - the description to be given to the order
 	 * @return the newly created order
 	 */
-	private MOrder createOrder (MPeriodicalSubscriber subscriber, String description) {
+	private MOrder createOrder (MPeriodicalSubscriber subscriber, String description, int warehous_id) {
 		
 		final String periodicalReceiptsProject = "periodical shipping";
 		int project_id = new Query(getCtx(), MProject.Table_Name, "value = '" + periodicalReceiptsProject + "'", null).firstId();
@@ -185,6 +189,8 @@ public class OrdersFromPeriodical extends SvrProcess {
 		
 		MOrderLine line = new MOrderLine(order);
 		line.setM_Product_ID(m_product_id);
+		if (warehous_id != 0)
+			line.setM_Warehouse_ID(warehous_id);
 		
 		BigDecimal qty = qtyPlan.multiply(subscriber.getQtyPlan());
 		line.setQty(qty);
