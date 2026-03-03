@@ -128,7 +128,10 @@ public class OrdersFromPeriodical extends SvrProcess {
 		renew.setBill_Location_ID(subscriber.getBill_Location_ID());
 		renew.setDescription(description);
 		renew.setDeliveryViaRule(MOrder.DELIVERYVIARULE_Delivery);
+		if (warehous_id != 0)
+			renew.setM_Warehouse_ID(warehous_id);
 		renew.saveEx();
+		
 		MOrderLine line = new MOrderLine(renew);
 		line.setM_Product_ID(subscriber.getC_PeriodicalSubscription().getM_Product_ID());
 		line.setQty(subscriber.getQtyOrdered());
@@ -185,6 +188,8 @@ public class OrdersFromPeriodical extends SvrProcess {
 		order.setC_Project_ID(project_id);
 		order.setDeliveryViaRule(MOrder.DELIVERYVIARULE_Delivery);
 		order.setPOReference(subscriber.getPOReference());
+		if (warehous_id != 0)
+			order.setM_Warehouse_ID(warehous_id);
 		order.saveEx(get_TrxName());
 		
 		MOrderLine line = new MOrderLine(order);
