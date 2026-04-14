@@ -34,7 +34,7 @@ public class X_C_PeriodicalEdition extends PO implements I_C_PeriodicalEdition, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250327L;
+	private static final long serialVersionUID = 20260410L;
 
     /** Standard Constructor */
     public X_C_PeriodicalEdition (Properties ctx, int C_PeriodicalEdition_ID, String trxName)

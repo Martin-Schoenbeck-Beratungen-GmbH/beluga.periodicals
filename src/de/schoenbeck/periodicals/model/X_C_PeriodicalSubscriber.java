@@ -34,7 +34,7 @@ public class X_C_PeriodicalSubscriber extends PO implements I_C_PeriodicalSubscr
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250327L;
+	private static final long serialVersionUID = 20260410L;
 
     /** Standard Constructor */
     public X_C_PeriodicalSubscriber (Properties ctx, int C_PeriodicalSubscriber_ID, String trxName)
@@ -116,6 +116,34 @@ public class X_C_PeriodicalSubscriber extends PO implements I_C_PeriodicalSubscr
       return sb.toString();
     }
 
+	public org.compiere.model.I_AD_User getAD_User() throws RuntimeException
+	{
+		return (org.compiere.model.I_AD_User)MTable.get(getCtx(), org.compiere.model.I_AD_User.Table_ID)
+			.getPO(getAD_User_ID(), get_TrxName());
+	}
+
+	/** Set User/Contact.
+		@param AD_User_ID User within the system - Internal or Business Partner Contact
+	*/
+	public void setAD_User_ID (int AD_User_ID)
+	{
+		if (AD_User_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_AD_User_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_AD_User_ID, Integer.valueOf(AD_User_ID));
+	}
+
+	/** Get User/Contact.
+		@return User within the system - Internal or Business Partner Contact
+	  */
+	public int getAD_User_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AD_User_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public org.compiere.model.I_C_BPartner getBill_BPartner() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -167,6 +195,34 @@ public class X_C_PeriodicalSubscriber extends PO implements I_C_PeriodicalSubscr
 	public int getBill_Location_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Bill_Location_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_AD_User getBill_User() throws RuntimeException
+	{
+		return (org.compiere.model.I_AD_User)MTable.get(getCtx(), org.compiere.model.I_AD_User.Table_ID)
+			.getPO(getBill_User_ID(), get_TrxName());
+	}
+
+	/** Set Invoice Contact.
+		@param Bill_User_ID Business Partner Contact for invoicing
+	*/
+	public void setBill_User_ID (int Bill_User_ID)
+	{
+		if (Bill_User_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_Bill_User_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_Bill_User_ID, Integer.valueOf(Bill_User_ID));
+	}
+
+	/** Get Invoice Contact.
+		@return Business Partner Contact for invoicing
+	  */
+	public int getBill_User_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_Bill_User_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

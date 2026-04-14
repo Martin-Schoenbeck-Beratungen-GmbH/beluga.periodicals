@@ -64,6 +64,21 @@ public interface I_C_PeriodicalSubscriber
 	  */
 	public int getAD_Org_ID();
 
+    /** Column name AD_User_ID */
+    public static final String COLUMNNAME_AD_User_ID = "AD_User_ID";
+
+	/** Set User/Contact.
+	  * User within the system - Internal or Business Partner Contact
+	  */
+	public void setAD_User_ID (int AD_User_ID);
+
+	/** Get User/Contact.
+	  * User within the system - Internal or Business Partner Contact
+	  */
+	public int getAD_User_ID();
+
+	public org.compiere.model.I_AD_User getAD_User() throws RuntimeException;
+
     /** Column name Bill_BPartner_ID */
     public static final String COLUMNNAME_Bill_BPartner_ID = "Bill_BPartner_ID";
 
@@ -93,6 +108,21 @@ public interface I_C_PeriodicalSubscriber
 	public int getBill_Location_ID();
 
 	public org.compiere.model.I_C_BPartner_Location getBill_Location() throws RuntimeException;
+
+    /** Column name Bill_User_ID */
+    public static final String COLUMNNAME_Bill_User_ID = "Bill_User_ID";
+
+	/** Set Invoice Contact.
+	  * Business Partner Contact for invoicing
+	  */
+	public void setBill_User_ID (int Bill_User_ID);
+
+	/** Get Invoice Contact.
+	  * Business Partner Contact for invoicing
+	  */
+	public int getBill_User_ID();
+
+	public org.compiere.model.I_AD_User getBill_User() throws RuntimeException;
 
     /** Column name C_BPartner_ID */
     public static final String COLUMNNAME_C_BPartner_ID = "C_BPartner_ID";

@@ -32,7 +32,7 @@ public class X_C_Periodical extends PO implements I_C_Periodical, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250327L;
+	private static final long serialVersionUID = 20260410L;
 
     /** Standard Constructor */
     public X_C_Periodical (Properties ctx, int C_Periodical_ID, String trxName)
@@ -220,5 +220,20 @@ public class X_C_Periodical extends PO implements I_C_Periodical, I_Persistent
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);
+	}
+
+	/** Set Subscriber Reservation.
+		@param subscriber_reservation_process Subscriber Reservation
+	*/
+	public void setsubscriber_reservation_process (String subscriber_reservation_process)
+	{
+		set_Value (COLUMNNAME_subscriber_reservation_process, subscriber_reservation_process);
+	}
+
+	/** Get Subscriber Reservation.
+		@return Subscriber Reservation	  */
+	public String getsubscriber_reservation_process()
+	{
+		return (String)get_Value(COLUMNNAME_subscriber_reservation_process);
 	}
 }

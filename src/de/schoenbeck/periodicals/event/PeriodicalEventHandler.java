@@ -168,8 +168,10 @@ public class PeriodicalEventHandler extends AbstractEventHandler {
 		
 		subscriber.setC_BPartner_ID(line.getC_BPartner_ID());
 		subscriber.setC_BPartner_Location_ID(line.getC_BPartner_Location_ID());
+		subscriber.setAD_User_ID(currentOrder.getAD_User_ID());
 		subscriber.setBill_BPartner_ID(currentOrder.getBill_BPartner_ID());
 		subscriber.setBill_Location_ID(currentOrder.getBill_Location_ID());
+		subscriber.setBill_User_ID(currentOrder.getBill_User_ID());
 		subscriber.setPOReference(currentOrder.getPOReference());
 		subscriber.setC_Order_ID(currentOrder.getC_Order_ID());
 		

@@ -124,8 +124,11 @@ public class OrdersFromPeriodical extends SvrProcess {
 		renew.setPOReference(subscriber.getPOReference());
 		renew.setBPartner((MBPartner) subscriber.getC_BPartner());
 		renew.setC_BPartner_Location_ID(subscriber.getC_BPartner_Location_ID());
+		renew.setAD_User_ID(subscriber.getAD_User_ID());
 		renew.setBill_BPartner_ID(subscriber.getBill_BPartner_ID());
 		renew.setBill_Location_ID(subscriber.getBill_Location_ID());
+		renew.setBill_User_ID(subscriber.getBill_User_ID());
+		
 		renew.setDescription(description);
 		renew.setDeliveryViaRule(MOrder.DELIVERYVIARULE_Delivery);
 		if (warehous_id != 0)
@@ -182,8 +185,10 @@ public class OrdersFromPeriodical extends SvrProcess {
 		MOrder order = new MOrder(getCtx(), 0, get_TrxName());
 		order.setBPartner( (MBPartner) subscriber.getC_BPartner());
 		order.setC_BPartner_Location_ID(subscriber.getC_BPartner_Location_ID());
+		order.setAD_User_ID(subscriber.getAD_User_ID());
 		order.setBill_BPartner_ID(subscriber.getBill_BPartner_ID());
 		order.setBill_Location_ID(subscriber.getBill_Location_ID());
+		order.setBill_User_ID(subscriber.getBill_User_ID());
 		order.setDescription(description);
 		order.setC_Project_ID(project_id);
 		order.setDeliveryViaRule(MOrder.DELIVERYVIARULE_Delivery);

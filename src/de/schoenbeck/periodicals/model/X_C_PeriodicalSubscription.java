@@ -33,7 +33,7 @@ public class X_C_PeriodicalSubscription extends PO implements I_C_PeriodicalSubs
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250327L;
+	private static final long serialVersionUID = 20260410L;
 
     /** Standard Constructor */
     public X_C_PeriodicalSubscription (Properties ctx, int C_PeriodicalSubscription_ID, String trxName)

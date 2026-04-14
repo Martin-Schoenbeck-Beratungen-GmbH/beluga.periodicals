@@ -16,6 +16,8 @@ public final class Util implements IProcessFactory {
 			return new OrdersFromPeriodical();
 		if (className.equals("de.schoenbeck.periodicals.process.ImportPeriodicalSubscriber"))
 			return new ImportPeriodicalSubscriber();
+		if (className.equals("de.schoenbeck.periodicals.process.SubscriptionReservationProcess"))
+			return new SubscriptionReservationProcess();
 		return null;
 	}
 	

@@ -191,4 +191,13 @@ public interface I_C_Periodical
 	  * Search key for the record in the format required - must be unique
 	  */
 	public String getValue();
+
+    /** Column name subscriber_reservation_process */
+    public static final String COLUMNNAME_subscriber_reservation_process = "subscriber_reservation_process";
+
+	/** Set Subscriber Reservation	  */
+	public void setsubscriber_reservation_process (String subscriber_reservation_process);
+
+	/** Get Subscriber Reservation	  */
+	public String getsubscriber_reservation_process();
 }
